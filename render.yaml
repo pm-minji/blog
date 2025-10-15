@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: ghost-blog
+    env: docker
+    region: singapore
+    plan: free
+    # Render가 Dockerfile을 보고 자동으로 빌드/실행합니다.
+    # 포트는 Ghost 기본(2368)이고 Render가 외부에 연결해줍니다.
+    autoDeploy: true
+
+    # ⚠️ 가장 중요! 게시글/이미지/테마가 들어갈 '영구 저장소'
+    disks:
+      - name: ghost-content
+        mountPath: /var/lib/ghost/content
+        sizeGB: 1
+
+    # 최초 실행 시 필요한 환경변수
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: url
+        # 임시로 Render의 기본 도메인을 넣어야 첫 부팅이 편합니다.
+        # 배포 후에 실제 도메인으로 바꿀 거예요.
+        value: https://placeholder.onrender.com
