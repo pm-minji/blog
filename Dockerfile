@@ -1,21 +1,24 @@
 FROM ghost:latest
 
-# 루트 권한으로 패키지/어댑터 설치
+# 루트 권한으로 필요한 도구 설치
 USER root
-
-# envsubst(템플릿 치환용) 설치
 RUN apt-get update && apt-get install -y --no-install-recommends gettext-base \
   && rm -rf /var/lib/apt/lists/*
 
-# S3 스토리지 어댑터는 Ghost 앱 폴더(/var/lib/ghost/current)에 설치해야 인식됨
-RUN cd /var/lib/ghost/current && npm install --production ghost-storage-adapter-s3
+# ✅ 어댑터를 '격리된 경로'에 설치하여 peer dependency 충돌 회피
+#   Ghost는 content/adapters/storage/<name> 경로를 자동으로 인식합니다.
+RUN mkdir -p /var/lib/ghost/content/adapters/storage/s3 && \
+    npm init -y --prefix /var/lib/ghost/content/adapters/storage/s3 && \
+    npm install --prefix /var/lib/ghost/content/adapters/storage/s3 \
+      --omit=dev --legacy-peer-deps \
+      ghost-storage-adapter-s3@latest
 
-# 템플릿/엔트리포인트 복사
+# 설정 템플릿/엔트리포인트 복사
 COPY config.template.json /tmp/config.template.json
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint-override.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint-override.sh
 
-# 실행 유저/작업 디렉토리 복귀
+# 실행 유저 및 작업 디렉토리 복귀
 USER node
 WORKDIR /var/lib/ghost
 
