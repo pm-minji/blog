@@ -3,20 +3,19 @@
   "database": {
     "client": "postgres",
     "connection": {
-      "connectionString": "postgresql://postgres:[YOUR-PASSWORD]@db.efakppkozwhxjoyuznmf.supabase.co:5432/postgres"
+      "connectionString": "__DATABASE_URL__"
     }
   },
   "server": { "host": "0.0.0.0", "port": 2368 },
   "logging": { "level": "info" },
-
   "storage": {
     "active": "s3",
     "s3": {
-      "accessKeyId": "f4efcd8bb93426e34039c2dc76aa6660",
-      "secretAccessKey": "dbf56f220b8e2c67d710f422f03925fd765296781efb6b31ce67b020d8a08d4b",
+      "accessKeyId": "__S3_ACCESS_KEY__",
+      "secretAccessKey": "__S3_SECRET_KEY__",
       "bucket": "ghost",
       "region": "ap-northeast-2",
-      "endpoint": "https://efakppkozwhxjoyuznmf.storage.supabase.co/storage/v1/s3",
+      "endpoint": "https://efakppkozwhxjoyuznmf.supabase.co/storage/v1/s3",
       "forcePathStyle": true
     }
   }
