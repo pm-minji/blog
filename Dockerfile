@@ -1,21 +1,23 @@
 FROM ghost:latest
-ENV NODE_ENV=production
 
-# envsubst + s3 어댑터
+# 루트 권한으로 패키지/어댑터 설치
+USER root
+
+# envsubst(템플릿 치환용) 설치
 RUN apt-get update && apt-get install -y --no-install-recommends gettext-base \
-  && rm -rf /var/lib/apt/lists/* \
-  && npm install ghost-storage-adapter-s3
+  && rm -rf /var/lib/apt/lists/*
 
-# 리포 전체를 /app 으로 복사 (컨텍스트 누락 방지)
-WORKDIR /app
-COPY . /app
+# S3 스토리지 어댑터는 Ghost 앱 폴더(/var/lib/ghost/current)에 설치해야 인식됨
+RUN cd /var/lib/ghost/current && npm install --production ghost-storage-adapter-s3
 
-# 디버그: 파일이 실제로 들어왔는지 빌드 로그에 출력하고 없으면 실패
-RUN ls -al /app && test -f /app/config.template.json
-RUN head -n 1 /app/config.template.json || true
+# 템플릿/엔트리포인트 복사
+COPY config.template.json /tmp/config.template.json
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint-override.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint-override.sh
 
-# 엔트리포인트 준비
-RUN chmod +x /app/docker-entrypoint.sh
+# 실행 유저/작업 디렉토리 복귀
+USER node
+WORKDIR /var/lib/ghost
 
 EXPOSE 2368
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint-override.sh"]
