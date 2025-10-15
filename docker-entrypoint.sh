@@ -1,7 +1,6 @@
 #!/bin/sh
 set -e
 
-# 필수 ENV 확인
 : "${APP_URL:?Need APP_URL}"
 : "${DATABASE_URL:?Need DATABASE_URL}"
 : "${S3_ACCESS_KEY:?Need S3_ACCESS_KEY}"
@@ -10,8 +9,8 @@ set -e
 : "${S3_REGION:?Need S3_REGION}"
 : "${S3_ENDPOINT:?Need S3_ENDPOINT}"
 
-# 템플릿 -> 실제 설정 생성
-envsubst < /tmp/config.template.json > /var/lib/ghost/config.production.json
+# ⬇️ /tmp 대신 /var/lib/ghost 경로 사용
+envsubst < /var/lib/ghost/config.template.json > /var/lib/ghost/config.production.json
 
-# ✅ 공식 Ghost Docker 이미지는 이 방식으로 실행
+# 공식 이미지 실행 방식
 exec node current/index.js
