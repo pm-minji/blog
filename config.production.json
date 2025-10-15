@@ -1,0 +1,16 @@
+{
+  "url": "https://placeholder.onrender.com",
+  "database": {
+    "client": "postgres",
+    "connection": {
+      "connectionString": "__DATABASE_URL__"
+    }
+  },
+  "storage": {
+    "active": "ghost-storage-cloudinary",
+    "ghost-storage-cloudinary": {
+      "useDatedFolder": true
+    }
+  },
+  "server": { "host": "0.0.0.0", "port": 2368 }
+}
