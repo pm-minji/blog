@@ -13,16 +13,6 @@
       "filename": "/var/lib/ghost/content/data/ghost.db"
     }
   },
-  "storage": {
-    "active": "cloudinary",
-    "cloudinary": {
-      "cloud_name": "@@CLOUDINARY_CLOUD_NAME@@",
-      "api_key": "@@CLOUDINARY_API_KEY@@",
-      "api_secret": "@@CLOUDINARY_API_SECRET@@",
-      "secure": true,
-      "useDatedFolder": false
-    }
-  },
   "imageOptimization": {
     "resize": false
   },
