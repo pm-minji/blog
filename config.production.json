@@ -1,5 +1,5 @@
 {
-  "url": "https://<나중에-Render에서-발급받은-도메인>.onrender.com",
+  "url": "https://blog-xf68.onrender.com",
   "server": {
     "port": 2368,
     "host": "0.0.0.0"
