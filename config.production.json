@@ -6,5 +6,5 @@
     "client": "sqlite3",
     "connection": { "filename": "/var/lib/ghost/content/data/ghost.db" }
   },
-  "logging": { "level": "info" }
+  "logging": { "level": "debug" }
 }
