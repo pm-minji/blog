@@ -1,22 +1,10 @@
 {
   "url": "https://blog-xf68.onrender.com",
-  "server": {
-    "port": 2368,
-    "host": "0.0.0.0"
-  },
-  "paths": {
-    "contentPath": "/var/lib/ghost/content"
-  },
+  "server": { "port": 2368, "host": "0.0.0.0" },
+  "paths": { "contentPath": "/var/lib/ghost/content" },
   "database": {
     "client": "sqlite3",
-    "connection": {
-      "filename": "/var/lib/ghost/content/data/ghost.db"
-    }
+    "connection": { "filename": "/var/lib/ghost/content/data/ghost.db" }
   },
-  "imageOptimization": {
-    "resize": false
-  },
-  "logging": {
-    "level": "info"
-  }
+  "logging": { "level": "info" }
 }
