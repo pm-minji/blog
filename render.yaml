@@ -1,0 +1,26 @@
+# render.yaml
+services:
+  - type: web
+    name: ghost-blog
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: url
+        # 배포 후 Render가 만드는 도메인을 대입하거나, 커스텀 도메인 연결 후 바꾸세요.
+        value: https://<나중에-Render에서-발급받은-도메인>.onrender.com
+      - key: database__client
+        value: sqlite3
+      - key: database__connection__filename
+        value: /var/lib/ghost/content/data/ghost.db
+      # Cloudinary(환경변수로 주입 → config.production.json 치환)
+      - key: CLOUDINARY_CLOUD_NAME
+        value: <cloud_name>
+      - key: CLOUDINARY_API_KEY
+        value: <api_key>
+      - key: CLOUDINARY_API_SECRET
+        value: <api_secret>
