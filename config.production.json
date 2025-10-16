@@ -1,0 +1,32 @@
+{
+  "url": "https://<나중에-Render에서-발급받은-도메인>.onrender.com",
+  "server": {
+    "port": 2368,
+    "host": "0.0.0.0"
+  },
+  "paths": {
+    "contentPath": "/var/lib/ghost/content"
+  },
+  "database": {
+    "client": "sqlite3",
+    "connection": {
+      "filename": "/var/lib/ghost/content/data/ghost.db"
+    }
+  },
+  "storage": {
+    "active": "cloudinary",
+    "cloudinary": {
+      "cloud_name": "@@CLOUDINARY_CLOUD_NAME@@",
+      "api_key": "@@CLOUDINARY_API_KEY@@",
+      "api_secret": "@@CLOUDINARY_API_SECRET@@",
+      "secure": true,
+      "useDatedFolder": false
+    }
+  },
+  "imageOptimization": {
+    "resize": false
+  },
+  "logging": {
+    "level": "info"
+  }
+}
