@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# But keep these
+!package.json
+!package-lock.json
+!.gitignore
+!README.md
+!/dist/

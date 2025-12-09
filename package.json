@@ -1,0 +1,16 @@
+{
+  "name": "ghost_minji_blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "gssg --url https://ghost-minji-blog.vercel.app --dest ./dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ghost-static-site-generator": "^1.1.4"
+  }
+}
