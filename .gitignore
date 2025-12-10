@@ -6,4 +6,6 @@
 !package-lock.json
 !.gitignore
 !README.md
+!PRODUCT_MANUAL.md
+!DATA_PIPELINE.md
 !/dist/

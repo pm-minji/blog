@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "gssg --url https://ghost-minji-blog.vercel.app --dest ./dist"
+    "deploy": "gssg --url https://pm-minji.com --dest ./dist"
   },
   "keywords": [],
   "author": "",

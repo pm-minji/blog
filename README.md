@@ -3,6 +3,15 @@
 나만의 Ghost 블로그에 오신 것을 환영합니다!
 이 프로젝트는 **내 컴퓨터(Mac)**에서 글을 쓰고, **Vercel**을 통해 전 세계에 무료로 배포하도록 설정되어 있습니다.
 
+- **🌐 라이브 주소**: [https://pm-minji.com](https://pm-minji.com)
+
+## 📚 1인 스타트업 운영 매뉴얼 (필독!)
+이 블로그를 '하나의 프로덕트'로 키우기 위한 직군별 가이드라인입니다.
+- **[👉 PRODUCT_MANUAL.md (운영 매뉴얼)](./PRODUCT_MANUAL.md)**: PM, 디자이너, 개발자로서 해야 할 일.
+- **[👉 DATA_PIPELINE.md (데이터 분석)](./DATA_PIPELINE.md)**: GTM, GA4, BigQuery를 활용한 데이터 파이프라인 구축법.
+
+---
+
 ## 🚀 빠른 시작 (Quick Start)
 
 ### 1. 글쓰기 모드 (Local)
@@ -25,6 +34,7 @@ git add .
 git commit -m "새로운 글 발행"
 git push
 ```
+*(GitHub에 Push하면 Vercel이 자동으로 감지하고 pm-minji.com에 반영합니다)*
 
 ## 🎨 꾸미기 (Design & Portfolio)
 이미 **포트폴리오용 테마(Solo)**와 **매거진 테마(Edition)**를 설치해 두었습니다!
