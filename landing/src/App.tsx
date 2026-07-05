@@ -1,9 +1,14 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { GarageScene, PAPER_MODE } from './scene/GarageScene'
+import { GarageGame } from './game/GarageGame'
 import { Overlay } from './ui/Overlay'
 import { useGarageScroll } from './scroll/useGarageScroll'
 import { STOP_COUNT } from './content/stations'
+
+/** Legacy scroll-rail modes stay reachable for comparison: ?rail (3D), ?paper. */
+const RAIL_MODE =
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('rail')
 
 /** 130vh of scroll travel per rail segment, plus the viewport itself. */
 const SPACER_HEIGHT = `${(STOP_COUNT - 1) * 130 + 100}vh`
@@ -42,7 +47,7 @@ function PaperTitle() {
   )
 }
 
-export default function App() {
+function RailApp() {
   const { progressRef, activeStation, scrollToStation } = useGarageScroll()
 
   return (
@@ -55,4 +60,9 @@ export default function App() {
       <Overlay activeStation={activeStation} onDotClick={scrollToStation} />
     </>
   )
+}
+
+export default function App() {
+  if (RAIL_MODE || PAPER_MODE) return <RailApp />
+  return <GarageGame />
 }
