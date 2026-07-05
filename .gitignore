@@ -8,4 +8,19 @@
 !README.md
 !PRODUCT_MANUAL.md
 !DATA_PIPELINE.md
-!/dist/
+!vercel.json
+
+# Deploy output (static site served by Vercel)
+!dist/
+!dist/**
+
+# Landing app source (3D garage)
+!landing/
+!landing/**
+landing/node_modules/
+landing/dist/
+landing/tsconfig.tsbuildinfo
+
+# Build scripts
+!scripts/
+!scripts/**

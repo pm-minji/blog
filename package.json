@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "gssg --url https://pm-minji.com --dest ./dist"
+    "build:blog": "gssg --url https://pm-minji.com --dest ./dist",
+    "build:landing": "npm --prefix landing run build",
+    "merge": "node scripts/merge-dist.mjs",
+    "deploy": "npm run build:blog && npm run build:landing && npm run merge"
   },
   "keywords": [],
   "author": "",
