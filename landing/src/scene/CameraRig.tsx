@@ -7,6 +7,10 @@ const REDUCED_MOTION =
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+/** External tooling can set window.__noDamp to make the camera dock instantly. */
+const noDamp = () =>
+  (window as unknown as Record<string, unknown>).__noDamp === true
+
 /**
  * Drives the camera along a CatmullRom rail from scroll progress.
  *
@@ -37,13 +41,15 @@ export function CameraRig({ progressRef }: { progressRef: RefObject<number> }) {
   }, [size, camera])
 
   useFrame(({ camera }, delta) => {
-    damped.current = REDUCED_MOTION
-      ? progressRef.current
-      : MathUtils.damp(damped.current, progressRef.current, 2.5, delta)
+    damped.current =
+      REDUCED_MOTION || noDamp()
+        ? progressRef.current
+        : MathUtils.damp(damped.current, progressRef.current, 2.5, delta)
     posCurve.getPoint(damped.current, pos)
     lookCurve.getPoint(damped.current, look)
     camera.position.copy(pos)
     camera.lookAt(look)
+    ;(window as unknown as Record<string, unknown>).__camT = damped.current
     if (import.meta.env.DEV) {
       ;(window as unknown as Record<string, unknown>).__camDebug = {
         t: damped.current,
