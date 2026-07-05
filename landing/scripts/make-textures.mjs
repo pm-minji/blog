@@ -394,7 +394,30 @@ async function floorConcrete() {
   `, { quality: 74 })
 }
 
-const jobs = { whiteboard, screenDeskA, screenDeskB, screenDeskC, screenMinji, clock247, nameplate, doorSign, posterShip, posterGrid, corkboard, floorConcrete }
+// ---------------------------------------------------------------- skylight
+async function skylight() {
+  const rnd = mulberry32(41)
+  const stars = Array.from({ length: 60 }, () => {
+    const x = rnd() * 512, y = rnd() * 300, r = 0.5 + rnd() * 1.2
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="#e8ecf8" opacity="${0.25 + rnd() * 0.6}"/>`
+  }).join('')
+  await render('skylight', 512, 384, `
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#070a18"/><stop offset="0.6" stop-color="#0d1430"/><stop offset="1" stop-color="#16204a"/>
+    </linearGradient>
+    <rect width="512" height="384" fill="url(#sky)"/>
+    ${stars}
+    <radialGradient id="mg"><stop offset="0" stop-color="#f2f0e4" stop-opacity="0.9"/><stop offset="0.3" stop-color="#dfe2ec" stop-opacity="0.25"/><stop offset="1" stop-color="#dfe2ec" stop-opacity="0"/></radialGradient>
+    <circle cx="370" cy="110" r="120" fill="url(#mg)"/>
+    <circle cx="370" cy="110" r="34" fill="#f4f1e2"/>
+    <circle cx="358" cy="100" r="7" fill="#dcd8c6" opacity="0.7"/>
+    <circle cx="382" cy="122" r="5" fill="#dcd8c6" opacity="0.6"/>
+    <ellipse cx="150" cy="300" rx="190" ry="36" fill="#1c2745" opacity="0.55"/>
+    <ellipse cx="420" cy="330" rx="160" ry="28" fill="#151d38" opacity="0.6"/>
+  `)
+}
+
+const jobs = { whiteboard, screenDeskA, screenDeskB, screenDeskC, screenMinji, clock247, nameplate, doorSign, posterShip, posterGrid, corkboard, floorConcrete, skylight }
 for (const [name, fn] of Object.entries(jobs)) {
   try {
     await fn()

@@ -62,22 +62,26 @@ export const STOP_COUNT = STATIONS.length + 1
 /** Scroll progress fraction for rail stop i (uniform CatmullRom parameter). */
 export const stopFraction = (i: number) => i / (STOP_COUNT - 1)
 
-/** Camera positions per rail stop — curve passes through these exactly. */
+/**
+ * Camera positions per rail stop — curve passes through these exactly.
+ * Cinematic tuning: seated-eye height (~1.32-1.42), off-axis approach so
+ * each subject lands on a thirds line with hall depth behind it.
+ */
 export const CAMERA_STOPS: Vector3[] = [
-  new Vector3(0, 1.5, 10.5),
-  new Vector3(0, 1.55, 3.2),
-  new Vector3(-2.0, 1.5, -5.2),
-  new Vector3(2.0, 1.5, -13.2),
-  new Vector3(-2.0, 1.5, -21.2),
-  new Vector3(0.9, 1.55, -28.5),
+  new Vector3(0, 1.35, 9.5),
+  new Vector3(-0.85, 1.35, 3.0),
+  new Vector3(-1.7, 1.32, -6.1),
+  new Vector3(1.7, 1.32, -14.1),
+  new Vector3(-1.7, 1.32, -22.1),
+  new Vector3(1.15, 1.42, -28.9),
 ]
 
 /** LookAt targets per rail stop. */
 export const LOOK_STOPS: Vector3[] = [
-  new Vector3(0, 1.6, -2),
-  new Vector3(0, 1.7, -2.8),
-  new Vector3(3.0, 1.05, -10.7),
-  new Vector3(-3.0, 1.05, -18.7),
-  new Vector3(3.0, 1.05, -26.7),
-  new Vector3(-1.4, 1.15, -35.0),
+  new Vector3(0, 1.75, -1),
+  new Vector3(0.25, 1.75, -2.8),
+  new Vector3(2.9, 1.05, -10.6),
+  new Vector3(-2.9, 1.05, -18.6),
+  new Vector3(2.9, 1.05, -26.6),
+  new Vector3(-1.5, 1.15, -35.2),
 ]

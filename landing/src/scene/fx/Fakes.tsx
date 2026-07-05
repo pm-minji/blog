@@ -48,25 +48,27 @@ export function LightCone({
   bottomRadius = 0.85,
   height = 2.2,
   opacity = 0.09,
+  color = '#ffd9a8',
 }: {
   position: [number, number, number]
   topRadius?: number
   bottomRadius?: number
   height?: number
   opacity?: number
+  color?: string
 }) {
   const mat = useMemo(
     () =>
       new MeshBasicMaterial({
         map: fxTextures().cone,
-        color: '#ffd9a8',
+        color,
         transparent: true,
         opacity,
         blending: AdditiveBlending,
         depthWrite: false,
         side: 2,
       }),
-    [opacity],
+    [opacity, color],
   )
   return (
     <mesh position={position} material={mat} renderOrder={10}>

@@ -26,10 +26,14 @@ export const lampEmissive = new MeshStandardMaterial({
   emissiveIntensity: 0.9,
   roughness: 0.8,
 })
+// Emissive pushed past 1.0 so the bloom pass (threshold 0.85) picks the
+// lintel up as a glowing sign while lit surfaces stay clean.
 export const accentEmissive = new MeshStandardMaterial({
   color: '#3a1c0e',
   emissive: new Color(ACCENT),
-  emissiveIntensity: 0.32,
+  emissiveIntensity: 1.0,
   roughness: 0.8,
 })
-export const bulbWarm = new MeshBasicMaterial({ color: '#ffe4bd', toneMapped: false })
+// HDR color (>1) — blooms as a hot filament without washing out the shade.
+export const bulbWarm = new MeshBasicMaterial({ toneMapped: false })
+bulbWarm.color.setRGB(2.1, 1.75, 1.25)

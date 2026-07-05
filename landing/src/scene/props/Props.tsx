@@ -1,5 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { RoundedBox } from '@react-three/drei'
 import {
   Color,
   InstancedMesh,
@@ -43,9 +44,7 @@ export function Monitor({
   })
   return (
     <group>
-      <mesh position={[0, 0.47, -0.015]} material={M.plasticBlack}>
-        <boxGeometry args={[0.66, 0.44, 0.035]} />
-      </mesh>
+      <RoundedBox args={[0.66, 0.44, 0.035]} radius={0.012} smoothness={2} position={[0, 0.47, -0.015]} material={M.plasticBlack} />
       <mesh position={[0, 0.47, 0.004]} material={mat}>
         <planeGeometry args={[0.6, 0.375]} />
       </mesh>
@@ -168,7 +167,7 @@ export function StringLights({
     return arr
   }, [from, to, count, sag])
 
-  const base = useMemo(() => new Color('#ffd9a8'), [])
+  const base = useMemo(() => new Color(1.85, 1.5, 1.05), [])
   const dim = useMemo(() => new Color('#8a6c4c'), [])
   const tmp = useMemo(() => new Object3D(), [])
 

@@ -13,6 +13,7 @@ import doorSignUrl from '../assets/tex/door-sign.webp'
 import floorUrl from '../assets/tex/floor-concrete.webp'
 import clockUrl from '../assets/tex/clock-247.webp'
 import nameplateUrl from '../assets/tex/nameplate.webp'
+import skylightUrl from '../assets/tex/skylight.webp'
 
 export const TEX = {
   whiteboard: whiteboardUrl,
@@ -27,6 +28,7 @@ export const TEX = {
   floor: floorUrl,
   clock: clockUrl,
   nameplate: nameplateUrl,
+  skylight: skylightUrl,
 } as const
 
 export type TexKey = keyof typeof TEX

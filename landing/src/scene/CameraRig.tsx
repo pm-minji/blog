@@ -36,7 +36,7 @@ export function CameraRig({ progressRef }: { progressRef: RefObject<number> }) {
   const { size, camera } = useThree()
   useEffect(() => {
     if (!(camera instanceof PerspectiveCamera)) return
-    camera.fov = size.width < size.height ? 68 : 55
+    camera.fov = size.width < size.height ? 62 : 50
     camera.updateProjectionMatrix()
   }, [size, camera])
 

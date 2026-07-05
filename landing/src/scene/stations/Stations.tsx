@@ -1,10 +1,27 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { MeshBasicMaterial, type Mesh, type PointLight } from 'three'
+import { RoundedBox } from '@react-three/drei'
+import {
+  CatmullRomCurve3,
+  MeshBasicMaterial,
+  TubeGeometry,
+  Vector3,
+  type Mesh,
+  type PointLight,
+} from 'three'
 import * as M from '../materials'
 import { useSrgbTexture } from '../textures'
-import { FloorPool, ShadowBlob } from '../fx/Fakes'
+import { FloorPool, LightCone, ShadowBlob } from '../fx/Fakes'
 import { DeskLamp, Monitor, Mug, OfficeChair, PendantLamp, PrototypeObject, StringLights, REDUCED_MOTION } from '../props/Props'
+
+/** Desk-to-floor power cable — the small mess that makes a desk look used. */
+function Cable({ points }: { points: Array<[number, number, number]> }) {
+  const geometry = useMemo(() => {
+    const curve = new CatmullRomCurve3(points.map((p) => new Vector3(...p)))
+    return new TubeGeometry(curve, 14, 0.011, 5, false)
+  }, [points])
+  return <mesh geometry={geometry} material={M.plasticBlack} />
+}
 
 /** Station 1 — whiteboard on a rolling stand, lit by a swaying pendant. */
 export function WhiteboardStation({ z }: { z: number }) {
@@ -12,9 +29,14 @@ export function WhiteboardStation({ z }: { z: number }) {
   const boardMat = useMemo(() => new MeshBasicMaterial({ map: tex, toneMapped: false, color: '#b9b6ad' }), [tex])
   return (
     <group position={[0, 0, z]}>
-      <mesh position={[0, 1.72, -0.02]} rotation={[-0.05, 0, 0]} material={M.metalMid}>
-        <boxGeometry args={[2.56, 1.76, 0.05]} />
-      </mesh>
+      <RoundedBox
+        args={[2.56, 1.76, 0.05]}
+        radius={0.018}
+        smoothness={2}
+        position={[0, 1.72, -0.02]}
+        rotation={[-0.05, 0, 0]}
+        material={M.metalMid}
+      />
       <mesh position={[0, 1.72, 0.011]} rotation={[-0.05, 0, 0]} material={boardMat}>
         <planeGeometry args={[2.4, 1.6]} />
       </mesh>
@@ -64,9 +86,7 @@ export function ProjectDesk({ z, side, screen, prototype, flicker = false, cool 
         distance={6.5}
         decay={2}
       />
-      <mesh position={[0, 0.74, 0]} material={M.wood}>
-        <boxGeometry args={[1.7, 0.06, 0.72]} />
-      </mesh>
+      <RoundedBox args={[1.7, 0.06, 0.72]} radius={0.015} smoothness={2} position={[0, 0.74, 0]} material={M.wood} />
       {[-0.78, 0.78].map((px) => (
         <mesh key={px} position={[px, 0.37, 0]} material={M.woodDark}>
           <boxGeometry args={[0.05, 0.74, 0.66]} />
@@ -75,6 +95,13 @@ export function ProjectDesk({ z, side, screen, prototype, flicker = false, cool 
       <group position={[-0.1, 0.77, -0.08]}>
         <Monitor screen={tex} breathePhase={z} />
       </group>
+      <Cable
+        points={[
+          [-0.1, 0.72, -0.3],
+          [0.12, 0.32, -0.4],
+          [-0.5, 0.015, -0.34],
+        ]}
+      />
       <mesh position={[-0.08, 0.785, 0.24]} rotation={[0, 0.06, 0]} material={M.plasticBlack}>
         <boxGeometry args={[0.42, 0.018, 0.14]} />
       </mesh>
@@ -92,7 +119,7 @@ export function ProjectDesk({ z, side, screen, prototype, flicker = false, cool 
           <boxGeometry args={[0.045, 0.17, 0.2]} />
         </mesh>
       ))}
-      <FloorPool position={[0, 0.012, 0.3]} radius={1.9} tint={cool ? '#9db4e8' : '#ffc79a'} opacity={0.45} />
+      <FloorPool position={[0, 0.012, 0.3]} radius={1.9} tint={cool ? '#9db4e8' : '#ffc79a'} opacity={0.34} />
       <ShadowBlob position={[0, 0.008, 0]} width={2.2} depth={1.3} />
     </group>
   )
@@ -104,8 +131,10 @@ export function MinjiCorner({ z }: { z: number }) {
   const cork = useSrgbTexture('corkboard')
   const clock = useSrgbTexture('clock')
   const plate = useSrgbTexture('nameplate')
+  const sky = useSrgbTexture('skylight')
   const lightRef = useRef<PointLight>(null)
   const corkMat = useMemo(() => new MeshBasicMaterial({ map: cork, toneMapped: false, color: '#c9b8a2' }), [cork])
+  const skyMat = useMemo(() => new MeshBasicMaterial({ map: sky, toneMapped: false, color: '#c8cfe2' }), [sky])
   const clockMat = useMemo(() => new MeshBasicMaterial({ map: clock, toneMapped: false }), [clock])
   const plateMat = useMemo(() => new MeshBasicMaterial({ map: plate, toneMapped: false, color: '#d8d2c6' }), [plate])
   const colonRef = useRef<Mesh>(null)
@@ -117,9 +146,14 @@ export function MinjiCorner({ z }: { z: number }) {
       <pointLight ref={lightRef} position={[-1.4, 2.0, 0.3]} color="#ffb37a" intensity={22} distance={7} decay={2} />
 
       <group position={[-1.6, 0, -0.7]} rotation={[0, 0.7, 0]}>
-        <mesh position={[0, 0.74, 0]} material={M.wood}>
-          <boxGeometry args={[1.9, 0.06, 0.78]} />
-        </mesh>
+        <RoundedBox args={[1.9, 0.06, 0.78]} radius={0.015} smoothness={2} position={[0, 0.74, 0]} material={M.wood} />
+        <Cable
+          points={[
+            [0.05, 0.72, -0.32],
+            [0.3, 0.3, -0.44],
+            [-0.35, 0.015, -0.4],
+          ]}
+        />
         {[-0.88, 0.88].map((px) => (
           <mesh key={px} position={[px, 0.37, 0]} material={M.woodDark}>
             <boxGeometry args={[0.05, 0.74, 0.7]} />
@@ -155,6 +189,30 @@ export function MinjiCorner({ z }: { z: number }) {
         <meshBasicMaterial color="#ffb14e" toneMapped={false} />
       </mesh>
 
+      <group position={[-1.5, 0, -0.4]}>
+        <mesh position={[0, 3.56, 0]} rotation={[Math.PI / 2, 0, 0]} material={skyMat}>
+          <planeGeometry args={[1.5, 1.1]} />
+        </mesh>
+        {[
+          [0, 0.79, 1.62, 0.12],
+          [0, -0.79, 1.62, 0.12],
+          [0.81, 0, 0.12, 1.1],
+          [-0.81, 0, 0.12, 1.1],
+        ].map(([fx, fz, fw, fd], i) => (
+          <mesh key={i} position={[fx, 3.54, fz]} material={M.metalDark}>
+            <boxGeometry args={[fw, 0.08, fd]} />
+          </mesh>
+        ))}
+        <LightCone
+          position={[0, 1.85, 0]}
+          topRadius={0.5}
+          bottomRadius={1.05}
+          height={3.4}
+          opacity={0.05}
+          color="#bcd0f5"
+        />
+        <FloorPool position={[0, 0.014, 0]} radius={1.25} tint="#9db4e8" opacity={0.3} />
+      </group>
       <StringLights from={[-3.2, 2.9, -1.1]} to={[0.9, 3.15, -1.1]} count={14} sag={0.4} />
       <mesh position={[-0.9, 0.006, 0.2]} rotation={[-Math.PI / 2, 0, 0.2]} material={M.rugFabric}>
         <planeGeometry args={[2.1, 1.5]} />

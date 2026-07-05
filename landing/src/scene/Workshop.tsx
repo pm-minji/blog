@@ -1,5 +1,6 @@
 import { STATIONS } from '../content/stations'
 import { Shell, EntranceFacade, Posters } from './shell/Shell'
+import { Dressing } from './shell/Dressing'
 import { WhiteboardStation, ProjectDesk, MinjiCorner, type DeskConfig } from './stations/Stations'
 import { BoxPiles } from './props/Props'
 import { DustMotes } from './fx/Fakes'
@@ -17,6 +18,7 @@ export function Workshop() {
       <Shell />
       <EntranceFacade />
       <Posters />
+      <Dressing />
       {STATIONS.map((s) => {
         if (s.id === 'whiteboard') return <WhiteboardStation key={s.id} z={s.z} />
         if (s.id === 'minji-desk') return <MinjiCorner key={s.id} z={s.z} />
