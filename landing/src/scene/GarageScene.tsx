@@ -2,8 +2,13 @@ import { Suspense, lazy, useEffect, type RefObject } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing'
 import { Workshop } from './Workshop'
+import { PaperVignette } from './PaperVignette'
 import { CameraRig } from './CameraRig'
 import { CAMERA_STOPS } from '../content/stations'
+
+/** ?paper — Paper Garage proof-of-look mode (direction exploration). */
+export const PAPER_MODE =
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('paper')
 
 const Perf = import.meta.env.DEV
   ? lazy(() => import('r3f-perf').then((m) => ({ default: m.Perf })))
@@ -51,14 +56,14 @@ export function GarageScene({ progressRef }: { progressRef: RefObject<number> })
       }}
     >
       <FrameBridge />
-      <color attach="background" args={['#141317']} />
-      <fog attach="fog" args={['#141317', 6, 26]} />
+      <color attach="background" args={[PAPER_MODE ? '#0a0b10' : '#141317']} />
+      {PAPER_MODE ? null : <fog attach="fog" args={['#141317', 6, 26]} />}
       <ambientLight color="#26221f" intensity={0.9} />
       <hemisphereLight args={['#35302c', '#101014', 0.5]} />
       <Suspense fallback={null}>
-        <Workshop />
+        {PAPER_MODE ? <PaperVignette progressRef={progressRef} /> : <Workshop />}
       </Suspense>
-      <CameraRig progressRef={progressRef} />
+      {PAPER_MODE ? null : <CameraRig progressRef={progressRef} />}
       <EffectComposer multisampling={DESKTOP ? 4 : 0}>
         <Bloom luminanceThreshold={0.85} mipmapBlur intensity={0.85} radius={0.72} />
         <Noise premultiply opacity={0.055} />

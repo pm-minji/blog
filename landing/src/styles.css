@@ -88,6 +88,42 @@ body {
   color: var(--accent);
 }
 
+/* ---------------------------------------------------------- paper title */
+.paper-title {
+  position: fixed;
+  left: clamp(20px, 6vw, 72px);
+  top: 16%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.paper-line {
+  display: flex;
+}
+
+.pchar-clip {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.pchar {
+  display: inline-block;
+  font-size: clamp(42px, 9vw, 84px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+}
+
+.paper-sub {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: clamp(13px, 2vw, 16px);
+  letter-spacing: 0.08em;
+  color: #c9b8a2;
+}
+
 /* ---------------------------------------------------------- scroll hint */
 .scroll-hint {
   position: absolute;
