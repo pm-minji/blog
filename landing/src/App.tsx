@@ -1,68 +1,27 @@
-import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
-import { GarageScene, PAPER_MODE } from './scene/GarageScene'
+import { Suspense, lazy } from 'react'
 import { GarageGame } from './game/GarageGame'
-import { Overlay } from './ui/Overlay'
-import { useGarageScroll } from './scroll/useGarageScroll'
-import { STOP_COUNT } from './content/stations'
 
-/** Legacy scroll-rail modes stay reachable for comparison: ?rail (3D), ?paper. */
-const RAIL_MODE =
-  typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('rail')
+/**
+ * The escape-room game is the site. The legacy scroll-rail prototypes
+ * (?rail = 3D workshop, ?paper = 2.5D vignette) stay reachable for
+ * reference but are code-split so the game path never downloads three.js.
+ */
+const LEGACY =
+  typeof window !== 'undefined' &&
+  (() => {
+    const q = new URLSearchParams(window.location.search)
+    return q.has('rail') || q.has('paper')
+  })()
 
-/** 130vh of scroll travel per rail segment, plus the viewport itself. */
-const SPACER_HEIGHT = `${(STOP_COUNT - 1) * 130 + 100}vh`
-
-/** Kinetic Hangul chapter title — Paper Garage direction sample. */
-function PaperTitle() {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    if (!ref.current) return
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.pchar',
-        { yPercent: 120, autoAlpha: 0, rotate: 4 },
-        { yPercent: 0, autoAlpha: 1, rotate: 0, duration: 0.7, ease: 'power3.out', stagger: 0.055, delay: 0.3 },
-      )
-      gsap.fromTo(
-        '.paper-sub',
-        { autoAlpha: 0, y: 10 },
-        { autoAlpha: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 1.1 },
-      )
-    }, ref)
-    return () => ctx.revert()
-  }, [])
-  const chars = [...'새벽 2시,']
-  return (
-    <div className="paper-title" ref={ref} aria-hidden="true">
-      <div className="paper-line">
-        {chars.map((c, i) => (
-          <span key={i} className="pchar-clip">
-            <span className="pchar">{c === ' ' ? ' ' : c}</span>
-          </span>
-        ))}
-      </div>
-      <p className="paper-sub">무언가가 만들어지는 중입니다</p>
-    </div>
-  )
-}
-
-function RailApp() {
-  const { progressRef, activeStation, scrollToStation } = useGarageScroll()
-
-  return (
-    <>
-      <div className="scroll-spacer" style={{ height: SPACER_HEIGHT }} aria-hidden="true" />
-      <div className="scene">
-        <GarageScene progressRef={progressRef} />
-      </div>
-      {PAPER_MODE ? <PaperTitle /> : null}
-      <Overlay activeStation={activeStation} onDotClick={scrollToStation} />
-    </>
-  )
-}
+const RailApp = lazy(() => import('./RailApp'))
 
 export default function App() {
-  if (RAIL_MODE || PAPER_MODE) return <RailApp />
+  if (LEGACY) {
+    return (
+      <Suspense fallback={null}>
+        <RailApp />
+      </Suspense>
+    )
+  }
   return <GarageGame />
 }

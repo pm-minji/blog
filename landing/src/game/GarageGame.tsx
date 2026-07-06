@@ -1,12 +1,14 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Room } from './Room'
 import { GameDialog } from './dialogs'
 import { CLUE_IDS, useGameState } from './state'
 import { useLang } from './strings'
+import { isMuted, toggleMute } from './sfx'
 
 export function GarageGame() {
   const game = useGameState()
   const { lang, toggle, t } = useLang()
+  const [muted, setMuted] = useState(isMuted)
   const total = CLUE_IDS.length
   const found = game.clues.size
 
@@ -45,9 +47,19 @@ export function GarageGame() {
           <span>{t.brandSub}</span>
         </h1>
         <div className="ghud-right">
-          <button className="ghud-lang" onClick={toggle} aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 보기'}>
-            {lang === 'ko' ? 'EN' : '한국어'}
-          </button>
+          <div className="ghud-btns">
+            <button className="ghud-lang" onClick={toggle} aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 보기'}>
+              {lang === 'ko' ? 'EN' : '한국어'}
+            </button>
+            <button
+              className="ghud-lang"
+              onClick={() => setMuted(toggleMute())}
+              aria-label={muted ? 'unmute' : 'mute'}
+              aria-pressed={muted}
+            >
+              {muted ? '♪̸' : '♪'}
+            </button>
+          </div>
           {game.phase === 'lit' || game.phase === 'done' ? (
             <div className="ghud-clues" aria-label={`${t.clue} ${found} / ${total}`}>
               <span className="ghud-count">

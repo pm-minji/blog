@@ -69,6 +69,15 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
           <stop offset="0" stopColor="#2c3040" />
           <stop offset="1" stopColor="#1d2030" />
         </linearGradient>
+        <radialGradient id="rWarmWall" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#5a4128" stopOpacity="0.55" />
+          <stop offset="0.6" stopColor="#3a2d20" stopOpacity="0.25" />
+          <stop offset="1" stopColor="#3a2d20" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient id="rCrtHalo">
+          <stop offset="0" stopColor="#9fe6ae" stopOpacity="0.16" />
+          <stop offset="1" stopColor="#9fe6ae" stopOpacity="0" />
+        </radialGradient>
       </defs>
 
       <g className="room-art">
@@ -79,6 +88,10 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
         </g>
         <rect y="770" width="1600" height="230" fill="url(#rFloor)" />
         <rect y="764" width="1600" height="9" fill="#0a0b10" />
+        <ellipse className="room-poolglow" cx="900" cy="560" rx="430" ry="330" fill="url(#rWarmWall)" />
+        <ellipse cx="900" cy="800" rx="330" ry="26" fill="#000" opacity="0.4" />
+        <ellipse cx="650" cy="792" rx="180" ry="18" fill="#000" opacity="0.35" />
+        <ellipse cx="1410" cy="796" rx="170" ry="18" fill="#000" opacity="0.35" />
 
         {/* ---------------- shutter door + mailbox (left) */}
         <g>
@@ -142,6 +155,7 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
           <rect x="800" y="430" width="230" height="188" rx="20" fill="url(#rCrt)" />
           <rect x="822" y="450" width="186" height="136" rx="9" fill="#0a0d0a" />
           <g className="crt-screen">
+            <ellipse cx="915" cy="518" rx="180" ry="130" fill="url(#rCrtHalo)" />
             <rect x="828" y="456" width="174" height="124" rx="6" fill="#12200f" />
             <text x="840" y="480" fontFamily="Menlo, monospace" fontSize="13" fill="#7fdf9a">$ whoami</text>
             <text x="840" y="500" fontFamily="Menlo, monospace" fontSize="13" fill="#7fdf9a">pm-minji</text>
@@ -149,6 +163,7 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
           </g>
           <rect x="884" y="618" width="62" height="16" rx="4" fill="#b0a68e" />
           <circle cx="1012" cy="602" r="4" fill="#d84a3a" />
+          <path d="M 900 634 q 20 40 -8 70 q -30 30 -20 62" stroke="#1b1a1f" strokeWidth="5" fill="none" strokeLinecap="round" />
           <g transform="translate(1022 452) rotate(4)">
             <rect width="48" height="48" fill="#ffd54a" />
             <text x="7" y="20" fontFamily="Apple SD Gothic Neo, sans-serif" fontWeight="700" fontSize="12" fill="#43350f">출시</text>
@@ -165,6 +180,7 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
             <ellipse cx="24" cy="20" rx="19" ry="7" fill="#ffe4b0" className="lamp-bulb" />
           </g>
           <circle className="lamp-glow" cx="842" cy="500" r="52" fill="url(#rLampGlow)" />
+          <circle className="moth" cx="870" cy="470" r="4" fill="#d8cfc0" opacity="0.85" />
           <path className="lamp-cord" d="M 706 632 q -26 40 -18 96" stroke="#d8cfc0" strokeWidth="4" fill="none" strokeLinecap="round" />
           <circle className="lamp-cord-tip" cx="688" cy="728" r="9" fill="#ffd54a" stroke="#8a6c2c" strokeWidth="2" />
           <circle className="lamp-hit" cx="688" cy="722" r="52" fill="transparent" />
@@ -256,6 +272,24 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
           <path d="M 1552 596 l 12 -18" stroke="#c9c0b2" strokeWidth="3" strokeLinecap="round" />
         </g>
 
+        {/* ---------------- wall tools + plant */}
+        <g>
+          {[
+            [452, 250],
+            [452, 330],
+          ].map(([hx, hy]) => (
+            <circle key={hy} cx={hx} cy={hy} r="5" fill="#3a4056" />
+          ))}
+          <path d="M 452 255 l -14 34 a 14 14 0 1 0 28 0 Z" fill="#8d8471" transform="rotate(12 452 272)" />
+          <rect x="446" y="336" width="12" height="52" rx="4" fill="#8d8471" transform="rotate(-14 452 360)" />
+          <rect x="438" y="330" width="28" height="14" rx="4" fill="#5f584c" transform="rotate(-14 452 337)" />
+        </g>
+        <g>
+          <rect x="440" y="440" width="62" height="12" rx="4" fill="#4c392b" />
+          <path d="M 466 438 q -14 -26 4 -44 q 4 24 8 30 q 10 -22 24 -26 q -6 26 -18 40 Z" fill="#3f6a4a" />
+          <rect x="458" y="418" width="20" height="22" rx="4" fill="#b3502a" />
+        </g>
+
         {/* ---------------- floor dressing */}
         <ellipse cx="900" cy="856" rx="180" ry="22" fill="#54301f" />
         <ellipse cx="900" cy="852" rx="180" ry="22" fill="#6a3d26" opacity="0.4" />
@@ -264,6 +298,8 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
           <rect x="24" y="4" width="26" height="38" rx="4" fill="#7e4238" transform="rotate(4 37 23)" />
         </g>
         <rect x="1180" y="820" width="60" height="42" rx="5" fill="#8a6f52" transform="rotate(-6 1210 841)" />
+        <rect x="1040" y="838" width="44" height="60" rx="3" fill="#e0dccf" opacity="0.9" transform="rotate(24 1062 868)" />
+        <rect x="470" y="850" width="40" height="56" rx="3" fill="#d6d1c2" opacity="0.85" transform="rotate(-18 490 878)" />
       </g>
 
       {/* ---- always-lit layer: window + moon (outside dark filter) */}

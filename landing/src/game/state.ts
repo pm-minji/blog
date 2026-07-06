@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { sfx } from './sfx'
 
 export type ClueId = 'whiteboard' | 'terminal' | 'toolbox' | 'corkboard' | 'mailbox'
 export type Phase = 'intro' | 'dark' | 'lit' | 'done'
@@ -27,7 +28,11 @@ export function useGameState(): GameState {
   const [lockSolved, setLockSolved] = useState(false)
 
   const collect = useCallback((id: ClueId) => {
-    setClues((prev) => (prev.has(id) ? prev : new Set(prev).add(id)))
+    setClues((prev) => {
+      if (prev.has(id)) return prev
+      sfx.clue()
+      return new Set(prev).add(id)
+    })
   }, [])
 
   return {
@@ -36,9 +41,15 @@ export function useGameState(): GameState {
     dialog,
     lockSolved,
     enter: useCallback(() => setPhase('dark'), []),
-    lightsOn: useCallback(() => setPhase('lit'), []),
+    lightsOn: useCallback(() => {
+      sfx.cordPull()
+      sfx.lightsOn()
+      setPhase('lit')
+    }, []),
     openDialog: useCallback(
       (id: Exclude<DialogId, null>) => {
+        if (id === 'radio') sfx.radio()
+        else sfx.open()
         setDialog(id)
         // Passive clues are collected on inspection; terminal/toolbox
         // collect through their own interactions.
@@ -48,7 +59,13 @@ export function useGameState(): GameState {
     ),
     closeDialog: useCallback(() => setDialog(null), []),
     collect,
-    solveLock: useCallback(() => setLockSolved(true), []),
-    finish: useCallback(() => setPhase('done'), []),
+    solveLock: useCallback(() => {
+      sfx.lockOpen()
+      setLockSolved(true)
+    }, []),
+    finish: useCallback(() => {
+      sfx.ending()
+      setPhase('done')
+    }, []),
   }
 }

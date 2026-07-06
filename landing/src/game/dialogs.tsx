@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import type { GameState } from './state'
 import type { GameStrings, Lang } from './strings'
 import { PROJECTS } from './projects'
+import { sfx } from './sfx'
 
 function Card({
   index,
@@ -64,6 +65,13 @@ function TerminalDialog({ game, t, lang }: DialogProps) {
       window.setTimeout(() => (window.location.href = '/blog/'), 500)
     } else if (c === '0247') {
       out.push({ t: t.term.pw, c: 'accent' })
+    } else if (c === 'make dopamine') {
+      sfx.dopamine()
+      out.push(
+        { t: 'compiling joy...', c: 'dim' },
+        { t: '▓▓▓▓▓▓▓▓▓▓ 100%', c: 'accent' },
+        { t: lang === 'ko' ? '도파민 충전 완료. 오늘도 뭔가 만들어봅시다.' : 'Dopamine restored. Go build something.', c: 'accent' },
+      )
     } else {
       out.push({ t: t.term.notFound(cmd), c: 'dim' })
     }
@@ -114,6 +122,7 @@ function LockDialog({ game, t, lang }: DialogProps) {
       game.solveLock()
       game.collect('toolbox')
     } else {
+      sfx.lockWrong()
       setShake(true)
       window.setTimeout(() => setShake(false), 450)
     }
