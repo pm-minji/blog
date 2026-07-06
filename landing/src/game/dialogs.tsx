@@ -1,15 +1,19 @@
 import { useRef, useState } from 'react'
 import type { GameState } from './state'
+import type { GameStrings, Lang } from './strings'
+import { PROJECTS } from './projects'
 
 function Card({
   index,
   title,
   onClose,
+  closeLabel,
   children,
 }: {
   index?: string
   title: string
   onClose: () => void
+  closeLabel: string
   children: React.ReactNode
 }) {
   return (
@@ -19,7 +23,7 @@ function Card({
         {index ? <p className="gcard-step">{index}</p> : null}
         <h2 className="gcard-title">{title}</h2>
         <div className="gcard-body">{children}</div>
-        <button className="gcard-close" onClick={onClose} aria-label="닫기">
+        <button className="gcard-close" onClick={onClose} aria-label={closeLabel}>
           ✕
         </button>
       </div>
@@ -27,13 +31,16 @@ function Card({
   )
 }
 
-const CLUE_BADGE = <p className="gclue-badge">단서 확보</p>
+interface DialogProps {
+  game: GameState
+  t: GameStrings
+  lang: Lang
+}
 
-function TerminalDialog({ game }: { game: GameState }) {
-  const [lines, setLines] = useState<Array<{ t: string; c?: string }>>([
-    { t: 'PM-MINJI OS v1.0 — guest 세션', c: 'dim' },
-    { t: '"help"를 입력해 보세요.', c: 'dim' },
-  ])
+function TerminalDialog({ game, t, lang }: DialogProps) {
+  const [lines, setLines] = useState<Array<{ t: string; c?: string }>>(
+    t.term.boot.map((b) => ({ t: b, c: 'dim' })),
+  )
   const [input, setInput] = useState('')
   const bodyRef = useRef<HTMLDivElement>(null)
 
@@ -41,30 +48,31 @@ function TerminalDialog({ game }: { game: GameState }) {
     const out: Array<{ t: string; c?: string }> = [{ t: `$ ${cmd}`, c: 'cmd' }]
     const c = cmd.trim().toLowerCase()
     if (c === 'help') {
-      out.push({ t: 'ls projects — 진행 중인 프로젝트' }, { t: 'whoami — 이 차고의 주인' }, { t: 'open blog — 작업 일지로 이동' })
+      out.push(...t.term.help.map((h) => ({ t: h })))
     } else if (c === 'ls projects' || c === 'ls') {
-      out.push(
-        { t: '01_사이드프로젝트A/   (정비 중)' },
-        { t: '02_사이드프로젝트B/   (지표 관찰)' },
-        { t: '03_비밀_프로토타입/   (공구함?)', c: 'accent' },
-      )
+      PROJECTS.forEach((p, i) => {
+        out.push({
+          t: `${String(i + 1).padStart(2, '0')}_${p.name[lang]}/   (${p.status[lang]})`,
+          c: p.secret ? 'accent' : undefined,
+        })
+      })
       game.collect('terminal')
     } else if (c === 'whoami') {
-      out.push({ t: 'pm-minji — 만드는 걸 좋아하는 PM' })
+      out.push({ t: t.term.whoami })
     } else if (c === 'open blog') {
-      out.push({ t: '블로그로 이동합니다...' })
+      out.push({ t: t.term.blog })
       window.setTimeout(() => (window.location.href = '/blog/'), 500)
     } else if (c === '0247') {
-      out.push({ t: '...비밀번호는 여기가 아니라 공구함에.', c: 'accent' })
+      out.push({ t: t.term.pw, c: 'accent' })
     } else {
-      out.push({ t: `command not found: ${cmd}`, c: 'dim' })
+      out.push({ t: t.term.notFound(cmd), c: 'dim' })
     }
     setLines((prev) => [...prev.slice(-16), ...out])
     window.setTimeout(() => bodyRef.current?.scrollTo({ top: 99999 }), 30)
   }
 
   return (
-    <Card index="CLUE 02" title="민지의 컴퓨터" onClose={game.closeDialog}>
+    <Card index="CLUE 02" title={t.term.title} onClose={game.closeDialog} closeLabel={t.close}>
       <div className="gterm" ref={bodyRef}>
         {lines.map((l, i) => (
           <p key={i} className={`gterm-line ${l.c ?? ''}`}>
@@ -88,16 +96,17 @@ function TerminalDialog({ game }: { game: GameState }) {
         }}
       >
         <span>$</span>
-        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="명령어 입력" aria-label="터미널 명령어" />
+        <input value={input} onChange={(e) => setInput(e.target.value)} placeholder={t.term.placeholder} aria-label={t.term.placeholder} />
       </form>
-      {game.clues.has('terminal') ? CLUE_BADGE : null}
+      {game.clues.has('terminal') ? <p className="gclue-badge">{t.clueBadge}</p> : null}
     </Card>
   )
 }
 
-function LockDialog({ game }: { game: GameState }) {
+function LockDialog({ game, t, lang }: DialogProps) {
   const [digits, setDigits] = useState([0, 0, 0, 0])
   const [shake, setShake] = useState(false)
+  const secret = PROJECTS.find((p) => p.secret)
   const bump = (i: number, d: number) =>
     setDigits((prev) => prev.map((v, k) => (k === i ? (v + d + 10) % 10 : v)))
   const check = () => {
@@ -112,91 +121,105 @@ function LockDialog({ game }: { game: GameState }) {
 
   if (game.lockSolved) {
     return (
-      <Card index="CLUE 03" title="공구함이 열렸다" onClose={game.closeDialog}>
-        <p className="gcard-text">
-          안에는 반쯤 조립된 <strong>비밀 프로토타입</strong>과 손글씨 메모가 들어 있다.
-        </p>
-        <p className="gcard-quote">"아직 아무한테도 안 보여준 것. 다음 달엔 리프트에 올린다." — MJ</p>
-        {CLUE_BADGE}
+      <Card index="CLUE 03" title={t.lockOpen.title} onClose={game.closeDialog} closeLabel={t.close}>
+        <p className="gcard-text">{t.lockOpen.text}</p>
+        {secret ? (
+          <p className="gcard-quote">
+            "{secret.blurb[lang]}" {t.lockOpen.quoteSuffix}
+          </p>
+        ) : null}
+        <p className="gclue-badge">{t.clueBadge}</p>
       </Card>
     )
   }
   return (
-    <Card title="잠긴 공구함" onClose={game.closeDialog}>
-      <p className="gcard-text">4자리 자물쇠가 걸려 있다. 이 차고 어딘가에 힌트가 있을 텐데.</p>
+    <Card title={t.lockClosed.title} onClose={game.closeDialog} closeLabel={t.close}>
+      <p className="gcard-text">{t.lockClosed.text}</p>
       <div className={`glock ${shake ? 'glock--shake' : ''}`}>
         {digits.map((d, i) => (
           <div key={i} className="glock-dial">
-            <button onClick={() => bump(i, 1)} aria-label={`자리 ${i + 1} 올리기`}>
+            <button onClick={() => bump(i, 1)} aria-label={`digit ${i + 1} up`}>
               ▲
             </button>
             <span>{d}</span>
-            <button onClick={() => bump(i, -1)} aria-label={`자리 ${i + 1} 내리기`}>
+            <button onClick={() => bump(i, -1)} aria-label={`digit ${i + 1} down`}>
               ▼
             </button>
           </div>
         ))}
       </div>
       <button className="glock-submit" onClick={check}>
-        열기
+        {t.lockClosed.open}
       </button>
-      <p className="gcard-hint">힌트: 민지의 차고에서 시간은 늘 같은 곳에 멈춰 있다.</p>
+      <p className="gcard-hint">{t.lockClosed.hint}</p>
     </Card>
   )
 }
 
-export function GameDialog({ game }: { game: GameState }) {
+export function GameDialog({ game, t, lang }: DialogProps) {
   const close = game.closeDialog
-  switch (game.dialog) {
+  const d = game.dialog
+  if (d && d.startsWith('project:')) {
+    const p = PROJECTS.find((x) => x.id === d.slice(8))
+    if (!p) return null
+    return (
+      <Card index={p.name[lang]} title={p.name[lang]} onClose={close} closeLabel={t.close}>
+        <p className="gcard-text">{p.blurb[lang]}</p>
+        <p className="gcard-hint">
+          {t.project.status}: {p.status[lang]}
+        </p>
+        {p.href ? (
+          <p className="gcard-text">
+            <a href={p.href}>{t.project.visit}</a>
+          </p>
+        ) : null}
+      </Card>
+    )
+  }
+  switch (d) {
     case 'whiteboard':
       return (
-        <Card index="CLUE 01" title="화이트보드의 로드맵" onClose={close}>
-          <p className="gcard-text">
-            아이디어 → 프로토타입 → <strong>출시</strong>에 빨간 동그라미. 그리고 옆에 화살표로 다시 처음으로.
-          </p>
-          <p className="gcard-quote">"완벽한 계획보다 어설픈 출시. 이 차고의 유일한 규칙." </p>
-          {CLUE_BADGE}
+        <Card index="CLUE 01" title={t.wb.title} onClose={close} closeLabel={t.close}>
+          <p className="gcard-text">{t.wb.text}</p>
+          <p className="gcard-quote">{t.wb.quote}</p>
+          <p className="gclue-badge">{t.clueBadge}</p>
         </Card>
       )
     case 'terminal':
-      return <TerminalDialog game={game} />
+      return <TerminalDialog game={game} t={t} lang={lang} />
     case 'toolbox':
-      return <LockDialog game={game} />
+      return <LockDialog game={game} t={t} lang={lang} />
     case 'corkboard':
       return (
-        <Card index="CLUE 04" title="코르크보드의 기록들" onClose={close}>
+        <Card index="CLUE 04" title={t.cork.title} onClose={close} closeLabel={t.close}>
+          <p className="gcard-text">{t.cork.text}</p>
           <p className="gcard-text">
-            폴라로이드 몇 장 — 새벽 3시의 책상, 첫 배포의 날, 오른쪽 위로 꺾이는 그래프. 그리고 "일단 만들자" 메모.
+            <a href="/about/">{t.cork.link}</a>
           </p>
-          <p className="gcard-text">
-            이 차고의 주인이 궁금하다면 <a href="/about/">민지에 대해 →</a>
-          </p>
-          {CLUE_BADGE}
+          <p className="gclue-badge">{t.clueBadge}</p>
         </Card>
       )
     case 'mailbox':
       return (
-        <Card index="CLUE 05" title="우편함" onClose={close}>
-          <p className="gcard-text">차고 소식지가 꽂혀 있다 — 새 프로젝트가 리프트에 오를 때마다 발행된다고.</p>
+        <Card index="CLUE 05" title={t.mail.title} onClose={close} closeLabel={t.close}>
+          <p className="gcard-text">{t.mail.text}</p>
           <p className="gcard-text">
-            <a href="/blog/">작업 일지 구독하러 가기 →</a>
+            <a href="/blog/">{t.mail.link}</a>
           </p>
-          {CLUE_BADGE}
+          <p className="gclue-badge">{t.clueBadge}</p>
         </Card>
       )
     case 'clock':
       return (
-        <Card title="벽시계" onClose={close}>
-          <p className="gcard-text">
-            새벽 <strong>2시 47분</strong>에 멈춰 있다. 건전지가 없는 게 아니라, 일부러 맞춰둔 것 같다.
-          </p>
-          <p className="gcard-hint">어딘가의 비밀번호 같기도 하고.</p>
+        <Card title={t.clock.title} onClose={close} closeLabel={t.close}>
+          <p className="gcard-text">{t.clock.text}</p>
+          <p className="gcard-hint">{t.clock.hint}</p>
         </Card>
       )
     case 'radio':
       return (
-        <Card title="라디오" onClose={close}>
-          <p className="gcard-text">지지직 — 새벽 주파수에서 lofi가 흘러나온다. 작업이 잘 되는 소리.</p>
+        <Card title={t.radio.title} onClose={close} closeLabel={t.close}>
+          <p className="gcard-text">{t.radio.text}</p>
         </Card>
       )
     default:

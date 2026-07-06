@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 
 export type ClueId = 'whiteboard' | 'terminal' | 'toolbox' | 'corkboard' | 'mailbox'
 export type Phase = 'intro' | 'dark' | 'lit' | 'done'
-export type DialogId = ClueId | 'clock' | 'radio' | null
+export type DialogId = ClueId | 'clock' | 'radio' | `project:${string}` | null
 
 export const CLUE_IDS: ClueId[] = ['whiteboard', 'terminal', 'toolbox', 'corkboard', 'mailbox']
 

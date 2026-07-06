@@ -1,13 +1,16 @@
 import type { GameState } from './state'
+import type { GameStrings, Lang } from './strings'
+import { SHELF_PROJECTS } from './projects'
 
 /**
  * The garage interior as one wide inline-SVG scene (viewBox 1600x1000).
  * Every prop is a hotspot group; the game layer drives phase classes.
  * Mobile pans horizontally via native scroll on the wrapper.
  */
-export function Room({ game }: { game: GameState }) {
+export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang: Lang }) {
   const { phase, clues, lockSolved } = game
   const dark = phase === 'dark'
+  const interactive = phase === 'lit' || phase === 'done'
   const hs = (id: Parameters<GameState['openDialog']>[0], label: string) => ({
     className: `hs hs-${id} ${clues.has(id as never) ? 'hs--found' : ''}`,
     role: 'button' as const,
@@ -25,8 +28,8 @@ export function Room({ game }: { game: GameState }) {
   return (
     <svg
       viewBox="0 0 1600 1000"
-      className={`room ${dark ? 'room--dark' : ''} ${phase === 'lit' || phase === 'done' ? 'room--lit' : ''}`}
-      aria-label="민지의 차고 내부"
+      className={`room ${dark ? 'room--dark' : ''} ${interactive ? 'room--lit' : ''}`}
+      aria-label={t.aria.room}
     >
       <defs>
         <linearGradient id="rWall" x1="0" y1="0" x2="0" y2="1">
@@ -89,7 +92,7 @@ export function Room({ game }: { game: GameState }) {
             EXIT — BLOG
           </text>
         </g>
-        <g {...hs('mailbox', '우편함 살펴보기')}>
+        <g {...hs('mailbox', t.aria.mailbox)}>
           <rect x="428" y="470" width="86" height="120" rx="10" fill="#b3502a" />
           <rect x="428" y="470" width="86" height="34" rx="10" fill="#d86a3a" />
           <rect x="446" y="496" width="50" height="8" rx="4" fill="#3a1c10" />
@@ -98,7 +101,7 @@ export function Room({ game }: { game: GameState }) {
         </g>
 
         {/* ---------------- whiteboard + clock (center-left) */}
-        <g {...hs('whiteboard', '화이트보드 읽기')}>
+        <g {...hs('whiteboard', t.aria.whiteboard)}>
           <rect x="500" y="200" width="300" height="212" rx="12" fill="#3d434f" />
           <rect x="510" y="210" width="280" height="192" rx="8" fill="#f2f0e9" />
           <g strokeLinecap="round" fill="none">
@@ -119,7 +122,7 @@ export function Room({ game }: { game: GameState }) {
           <text x="700" y="388" fontFamily="Menlo, monospace" fontSize="13" fill="#8b8b90">v0.3</text>
           <circle className="hs-ring" cx="650" cy="306" r="130" />
         </g>
-        <g {...hs('clock', '벽시계 보기')}>
+        <g {...hs('clock', t.aria.clock)}>
           <rect x="860" y="130" width="128" height="64" rx="10" fill="#131118" stroke="#2a2634" strokeWidth="3" />
           <text x="924" y="176" textAnchor="middle" fontFamily="Menlo, monospace" fontSize="40" fontWeight="700" fill="#ffb14e" className="clock-digits">
             2:47
@@ -135,7 +138,7 @@ export function Room({ game }: { game: GameState }) {
           <rect x="656" y="666" width="16" height="112" rx="5" fill="#2b2530" />
           <rect x="1128" y="666" width="16" height="112" rx="5" fill="#2b2530" />
         </g>
-        <g {...hs('terminal', '컴퓨터 사용하기')}>
+        <g {...hs('terminal', t.aria.terminal)}>
           <rect x="800" y="430" width="230" height="188" rx="20" fill="url(#rCrt)" />
           <rect x="822" y="450" width="186" height="136" rx="9" fill="#0a0d0a" />
           <g className="crt-screen">
@@ -153,7 +156,7 @@ export function Room({ game }: { game: GameState }) {
           </g>
           <circle className="hs-ring" cx="915" cy="524" r="120" />
         </g>
-        <g className="lamp" onClick={() => dark && game.lightsOn()} role={dark ? 'button' : undefined} tabIndex={dark ? 0 : -1} aria-label="램프 줄 당기기"
+        <g className="lamp" onClick={() => dark && game.lightsOn()} role={dark ? 'button' : undefined} tabIndex={dark ? 0 : -1} aria-label={t.aria.lamp}
           onKeyDown={(e) => { if (dark && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); game.lightsOn() } }}>
           <path d="M 700 636 L 760 540 L 826 486" stroke="#23252f" strokeWidth="11" strokeLinecap="round" fill="none" />
           <circle cx="760" cy="540" r="8" fill="#191b22" />
@@ -177,7 +180,7 @@ export function Room({ game }: { game: GameState }) {
         </g>
 
         {/* ---------------- workbench + toolbox + corkboard + radio (right) */}
-        <g {...hs('corkboard', '코르크보드 살펴보기')}>
+        <g {...hs('corkboard', t.aria.corkboard)}>
           <rect x="1290" y="180" width="250" height="190" rx="10" fill="#52402e" />
           <rect x="1300" y="190" width="230" height="170" rx="6" fill="#8a6f52" />
           <g transform="translate(1318 210) rotate(-4)">
@@ -204,7 +207,7 @@ export function Room({ game }: { game: GameState }) {
           <rect x="1286" y="664" width="14" height="114" rx="5" fill="#2b2530" />
           <rect x="1530" y="664" width="14" height="114" rx="5" fill="#2b2530" />
         </g>
-        <g {...hs('toolbox', lockSolved ? '공구함 (열림)' : '잠긴 공구함')}>
+        <g {...hs('toolbox', lockSolved ? t.aria.toolboxOpen : t.aria.toolboxLocked)}>
           <rect x="1310" y="560" width="180" height="80" rx="10" fill="#b3502a" />
           <rect x="1310" y="560" width="180" height="22" rx="10" fill="#d86a3a" />
           <rect x="1382" y="548" width="36" height="16" rx="8" fill="#8a3b1e" />
@@ -222,7 +225,30 @@ export function Room({ game }: { game: GameState }) {
           )}
           <circle className="hs-ring" cx="1400" cy="596" r="90" />
         </g>
-        <g {...hs('radio', '라디오 틀기')}>
+        <g>
+          <rect x="1300" y="500" width="230" height="14" rx="5" fill="#4c392b" />
+          {SHELF_PROJECTS.map((p, i) => (
+            <g
+              key={p.id}
+              className="hs hs-project"
+              role="button"
+              tabIndex={interactive ? 0 : -1}
+              aria-label={t.aria.shelf(p.name[lang])}
+              onClick={() => interactive && game.openDialog(`project:${p.id}`)}
+              onKeyDown={(e) => {
+                if ((e.key === 'Enter' || e.key === ' ') && interactive) {
+                  e.preventDefault()
+                  game.openDialog(`project:${p.id}`)
+                }
+              }}
+            >
+              <rect x={1316 + i * 62} y="452" width="46" height="46" rx="8" fill={p.color} />
+              <rect x={1316 + i * 62} y="452" width="46" height="13" rx="6" fill="#00000038" />
+              <circle cx={1339 + i * 62} cy="490" r="3" fill="#ffffff66" />
+            </g>
+          ))}
+        </g>
+        <g {...hs('radio', t.aria.radio)}>
           <rect x="1500" y="596" width="56" height="44" rx="8" fill="#3a3f52" />
           <circle cx="1516" cy="618" r="9" fill="#c9c0b2" />
           <rect x="1532" y="608" width="18" height="4" rx="2" fill="#c9c0b2" />

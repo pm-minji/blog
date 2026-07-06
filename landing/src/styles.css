@@ -273,6 +273,42 @@ body {
   color: var(--ink-dim);
 }
 
+.ghud-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.ghud-lang {
+  pointer-events: auto;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid rgba(244, 242, 238, 0.25);
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.ghud-lang:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.hs-project rect {
+  transition: transform 0.2s ease, filter 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+.room--lit .hs-project:hover rect,
+.room--lit .hs-project:focus-visible rect {
+  transform: scale(1.12);
+  filter: brightness(1.25);
+}
+
 .ghud-clues {
   display: flex;
   flex-direction: column;

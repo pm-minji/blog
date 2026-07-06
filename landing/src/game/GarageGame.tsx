@@ -2,16 +2,22 @@ import { useEffect } from 'react'
 import { Room } from './Room'
 import { GameDialog } from './dialogs'
 import { CLUE_IDS, useGameState } from './state'
+import { useLang } from './strings'
 
 export function GarageGame() {
   const game = useGameState()
+  const { lang, toggle, t } = useLang()
   const total = CLUE_IDS.length
   const found = game.clues.size
 
   useEffect(() => {
+    document.documentElement.lang = lang
+  }, [lang])
+
+  useEffect(() => {
     if (found === total && game.dialog === null && game.phase === 'lit') {
-      const t = window.setTimeout(() => game.finish(), 600)
-      return () => window.clearTimeout(t)
+      const timer = window.setTimeout(() => game.finish(), 600)
+      return () => window.clearTimeout(timer)
     }
   }, [found, total, game])
 
@@ -28,7 +34,7 @@ export function GarageGame() {
   return (
     <div className={`game game--${game.phase}`}>
       <div className="room-pan">
-        <Room game={game} />
+        <Room game={game} t={t} lang={lang} />
       </div>
       <div className="game-vignette" aria-hidden="true" />
       <div className="game-grain" aria-hidden="true" />
@@ -36,66 +42,71 @@ export function GarageGame() {
       <header className="ghud">
         <h1 className="ghud-brand">
           PM-Minji's Garage
-          <span>새벽 2:47의 차고</span>
+          <span>{t.brandSub}</span>
         </h1>
-        {game.phase === 'lit' || game.phase === 'done' ? (
-          <div className="ghud-clues" aria-label={`단서 ${found} / ${total}`}>
-            <span className="ghud-count">
-              단서 {found}<em> / {total}</em>
-            </span>
-            <span className="ghud-dots">
-              {CLUE_IDS.map((id) => (
-                <i key={id} className={game.clues.has(id) ? 'on' : ''} />
-              ))}
-            </span>
-          </div>
-        ) : null}
+        <div className="ghud-right">
+          <button className="ghud-lang" onClick={toggle} aria-label={lang === 'ko' ? 'Switch to English' : '한국어로 보기'}>
+            {lang === 'ko' ? 'EN' : '한국어'}
+          </button>
+          {game.phase === 'lit' || game.phase === 'done' ? (
+            <div className="ghud-clues" aria-label={`${t.clue} ${found} / ${total}`}>
+              <span className="ghud-count">
+                {t.clue} {found}
+                <em> / {total}</em>
+              </span>
+              <span className="ghud-dots">
+                {CLUE_IDS.map((id) => (
+                  <i key={id} className={game.clues.has(id) ? 'on' : ''} />
+                ))}
+              </span>
+            </div>
+          ) : null}
+        </div>
       </header>
 
-      {game.phase === 'dark' ? (
-        <p className="game-toast">깜깜하다. 어딘가 불을 켤 만한 게 있을 텐데… (노란 줄을 찾아보세요)</p>
-      ) : null}
-      {game.phase === 'lit' && found === 0 ? (
-        <p className="game-toast">불이 켜졌다. 차고를 뒤져 단서 {total}개를 찾아보자.</p>
-      ) : null}
+      {game.phase === 'dark' ? <p className="game-toast">{t.toastDark}</p> : null}
+      {game.phase === 'lit' && found === 0 ? <p className="game-toast">{t.toastLit(total)}</p> : null}
 
       {game.phase === 'intro' ? (
         <div className="gintro">
-          <p className="gintro-time">AM 2:47</p>
+          <p className="gintro-time">{t.introTime}</p>
           <h2 className="gintro-title">
-            민지의 차고 앞.
-            <br />
-            셔터 틈으로 불빛이 샌다.
+            {t.introTitle.split('\n').map((line, i) => (
+              <span key={i}>
+                {line}
+                <br />
+              </span>
+            ))}
           </h2>
-          <p className="gintro-sub">주인은 잠깐 자리를 비운 것 같다. 안을 둘러볼 절호의 기회.</p>
+          <p className="gintro-sub">{t.introSub}</p>
           <button className="gintro-btn" onClick={game.enter}>
-            몰래 들어가기
+            {t.introBtn}
           </button>
           <p className="gintro-alt">
-            <a href="/blog/">그냥 블로그로 갈래요 →</a>
+            <a href="/blog/">{t.introAlt}</a>
           </p>
         </div>
       ) : null}
 
       {game.phase === 'done' ? (
         <div className="gintro gend">
-          <p className="gintro-time">단서 {total} / {total}</p>
-          <h2 className="gintro-title">이 차고의 주인을 알 것 같다.</h2>
-          <p className="gintro-sub">
-            새벽 2시 47분에도 뭔가를 만들고, 어설퍼도 일단 출시하고, 죽은 프로젝트도 부검해서 벽에 붙여두는 사람.
+          <p className="gintro-time">
+            {t.clue} {total} / {total}
           </p>
+          <h2 className="gintro-title">{t.endTitle}</h2>
+          <p className="gintro-sub">{t.endSub}</p>
           <div className="gend-ctas">
             <a className="gintro-btn" href="/blog/">
-              작업 일지 읽으러 가기
+              {t.endBlog}
             </a>
             <a className="gend-sub" href="/about/">
-              민지에 대해 →
+              {t.endAbout}
             </a>
           </div>
         </div>
       ) : null}
 
-      <GameDialog game={game} />
+      <GameDialog game={game} t={t} lang={lang} />
     </div>
   )
 }
