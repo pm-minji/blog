@@ -92,7 +92,7 @@ body {
 .game {
   position: fixed;
   inset: 0;
-  background: #0a0b10;
+  background: radial-gradient(ellipse 120% 100% at 50% 40%, #12141d 0%, #0a0b10 60%, #06070b 100%);
   overflow: hidden;
 }
 

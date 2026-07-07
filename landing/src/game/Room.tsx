@@ -78,6 +78,34 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
           <stop offset="0" stopColor="#9fe6ae" stopOpacity="0.16" />
           <stop offset="1" stopColor="#9fe6ae" stopOpacity="0" />
         </radialGradient>
+        <linearGradient id="rSlat" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#323950" />
+          <stop offset="0.75" stopColor="#252a3c" />
+          <stop offset="1" stopColor="#1c202f" />
+        </linearGradient>
+        <linearGradient id="rMetalFrame" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#8b93aa" />
+          <stop offset="0.5" stopColor="#5d6478" />
+          <stop offset="1" stopColor="#454b5e" />
+        </linearGradient>
+        <linearGradient id="rToolboxMetal" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#e07845" />
+          <stop offset="0.35" stopColor="#c25c30" />
+          <stop offset="1" stopColor="#8f3d1e" />
+        </linearGradient>
+        <linearGradient id="rSheen" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.11" />
+          <stop offset="0.45" stopColor="#ffffff" stopOpacity="0.02" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <filter id="rGrain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n" />
+          <feColorMatrix
+            in="n"
+            type="matrix"
+            values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.55 0"
+          />
+        </filter>
       </defs>
 
       <g className="room-art">
@@ -87,7 +115,11 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
           <line x1="1240" y1="0" x2="1240" y2="770" />
         </g>
         <rect y="770" width="1600" height="230" fill="url(#rFloor)" />
+        <rect y="748" width="1600" height="20" fill="#171a26" />
         <rect y="764" width="1600" height="9" fill="#0a0b10" />
+        <ellipse cx="360" cy="880" rx="200" ry="60" fill="#000" opacity="0.14" />
+        <ellipse cx="1310" cy="900" rx="240" ry="70" fill="#000" opacity="0.12" />
+        <ellipse cx="1140" cy="820" rx="130" ry="30" fill="#9db4e8" opacity="0.05" />
         <ellipse className="room-poolglow" cx="900" cy="560" rx="430" ry="330" fill="url(#rWarmWall)" />
         <ellipse cx="900" cy="800" rx="330" ry="26" fill="#000" opacity="0.4" />
         <ellipse cx="650" cy="792" rx="180" ry="18" fill="#000" opacity="0.35" />
@@ -97,9 +129,14 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
         <g>
           <rect x="70" y="120" width="330" height="650" fill="url(#rShutter)" rx="6" />
           {Array.from({ length: 10 }, (_, i) => (
-            <rect key={i} x="82" y={140 + i * 62} width="306" height="44" rx="6" fill="#262b3d" stroke="#1a1d2b" strokeWidth="3" />
+            <g key={i}>
+              <rect x="82" y={140 + i * 62} width="306" height="44" rx="6" fill="url(#rSlat)" stroke="#161927" strokeWidth="2.5" />
+              <rect x="88" y={144 + i * 62} width="294" height="4" rx="2" fill="#3d445c" opacity="0.5" />
+            </g>
           ))}
-          <rect x="180" y="700" width="110" height="26" rx="6" fill="#3a4056" />
+          <rect x="180" y="700" width="110" height="26" rx="8" fill="url(#rMetalFrame)" />
+          <rect x="186" y="704" width="98" height="6" rx="3" fill="#a8afc4" opacity="0.5" />
+          <ellipse cx="235" cy="111" rx="190" ry="34" fill="#ff5a1f" opacity="0.14" />
           <rect x="60" y="96" width="350" height="30" rx="6" fill="#ff5a1f" opacity="0.9" />
           <text x="235" y="117" textAnchor="middle" fontFamily="Menlo, monospace" fontSize="17" fontWeight="700" fill="#2b1408" letterSpacing="3">
             EXIT — BLOG
@@ -115,8 +152,13 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
 
         {/* ---------------- whiteboard + clock (center-left) */}
         <g {...hs('whiteboard', t.aria.whiteboard)}>
-          <rect x="500" y="200" width="300" height="212" rx="12" fill="#3d434f" />
+          <rect x="508" y="210" width="300" height="212" rx="12" fill="#000" opacity="0.3" />
+          <rect x="500" y="200" width="300" height="212" rx="12" fill="url(#rMetalFrame)" />
           <rect x="510" y="210" width="280" height="192" rx="8" fill="#f2f0e9" />
+          <rect x="510" y="210" width="280" height="192" rx="8" fill="url(#rSheen)" />
+          <rect x="560" y="416" width="180" height="10" rx="4" fill="#454b5e" />
+          <rect x="580" y="408" width="30" height="8" rx="3" fill="#2b3a67" />
+          <rect x="618" y="408" width="30" height="8" rx="3" fill="#d9372e" />
           <g strokeLinecap="round" fill="none">
             <rect x="528" y="238" width="66" height="30" rx="6" stroke="#2b3a67" strokeWidth="4" />
             <path d="M 598 253 h 28 m -8 -7 l 9 7 l -9 7" stroke="#2b3a67" strokeWidth="4" />
@@ -148,11 +190,15 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
         <g>
           <rect x="620" y="640" width="560" height="26" rx="7" fill="url(#rDesk)" />
           <rect x="620" y="640" width="560" height="6" rx="3" fill="#a87c50" opacity="0.85" />
+          <path d="M 650 654 h 180 M 880 658 h 240 M 700 660 h 90" stroke="#3a2a1d" strokeWidth="1.5" opacity="0.5" strokeLinecap="round" />
           <rect x="656" y="666" width="16" height="112" rx="5" fill="#2b2530" />
           <rect x="1128" y="666" width="16" height="112" rx="5" fill="#2b2530" />
         </g>
         <g {...hs('terminal', t.aria.terminal)}>
           <rect x="800" y="430" width="230" height="188" rx="20" fill="url(#rCrt)" />
+          {[842, 872, 902].map((vx) => (
+            <rect key={vx} x={vx} y="436" width="24" height="3.5" rx="1.75" fill="#9a9078" opacity="0.7" />
+          ))}
           <rect x="822" y="450" width="186" height="136" rx="9" fill="#0a0d0a" />
           <g className="crt-screen">
             <ellipse cx="915" cy="518" rx="180" ry="130" fill="url(#rCrtHalo)" />
@@ -160,6 +206,7 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
             <text x="840" y="480" fontFamily="Menlo, monospace" fontSize="13" fill="#7fdf9a">$ whoami</text>
             <text x="840" y="500" fontFamily="Menlo, monospace" fontSize="13" fill="#7fdf9a">pm-minji</text>
             <text x="840" y="524" fontFamily="Menlo, monospace" fontSize="13" fill="#7fdf9a">$ <tspan className="crt-cursor" fill="#ffcf92">█</tspan></text>
+            <path d="M 828 470 L 900 456 L 852 580 L 828 580 Z" fill="url(#rSheen)" />
           </g>
           <rect x="884" y="618" width="62" height="16" rx="4" fill="#b0a68e" />
           <circle cx="1012" cy="602" r="4" fill="#d84a3a" />
@@ -224,9 +271,16 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
           <rect x="1530" y="664" width="14" height="114" rx="5" fill="#2b2530" />
         </g>
         <g {...hs('toolbox', lockSolved ? t.aria.toolboxOpen : t.aria.toolboxLocked)}>
-          <rect x="1310" y="560" width="180" height="80" rx="10" fill="#b3502a" />
-          <rect x="1310" y="560" width="180" height="22" rx="10" fill="#d86a3a" />
-          <rect x="1382" y="548" width="36" height="16" rx="8" fill="#8a3b1e" />
+          <rect x="1310" y="560" width="180" height="80" rx="10" fill="url(#rToolboxMetal)" />
+          <rect x="1310" y="560" width="180" height="22" rx="10" fill="#e07845" />
+          <rect x="1310" y="580" width="180" height="3" fill="#7a3318" opacity="0.8" />
+          {[1324, 1476].map((rx) => (
+            <g key={rx}>
+              <circle cx={rx} cy="572" r="3" fill="#7a3318" />
+              <circle cx={rx} cy="628" r="3" fill="#7a3318" />
+            </g>
+          ))}
+          <rect x="1378" y="544" width="44" height="18" rx="9" fill="none" stroke="#8a3b1e" strokeWidth="7" />
           {lockSolved ? (
             <g>
               <rect x="1382" y="588" width="36" height="30" rx="6" fill="#3f8f4f" />
@@ -266,9 +320,12 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
         </g>
         <g {...hs('radio', t.aria.radio)}>
           <rect x="1500" y="596" width="56" height="44" rx="8" fill="#3a3f52" />
+          <rect x="1500" y="596" width="56" height="44" rx="8" fill="url(#rSheen)" />
           <circle cx="1516" cy="618" r="9" fill="#c9c0b2" />
+          <circle cx="1516" cy="618" r="4" fill="#8d8471" />
           <rect x="1532" y="608" width="18" height="4" rx="2" fill="#c9c0b2" />
           <rect x="1532" y="618" width="18" height="4" rx="2" fill="#c9c0b2" />
+          <circle cx="1541" cy="632" r="2.5" fill="#5fd0a5" />
           <path d="M 1552 596 l 12 -18" stroke="#c9c0b2" strokeWidth="3" strokeLinecap="round" />
         </g>
 
@@ -293,6 +350,7 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
         {/* ---------------- floor dressing */}
         <ellipse cx="900" cy="856" rx="180" ry="22" fill="#54301f" />
         <ellipse cx="900" cy="852" rx="180" ry="22" fill="#6a3d26" opacity="0.4" />
+        <ellipse cx="900" cy="853" rx="140" ry="15" fill="none" stroke="#7a4a30" strokeWidth="3" opacity="0.6" />
         <g transform="translate(560 812)">
           <rect width="26" height="40" rx="4" fill="#3a4a6e" transform="rotate(-8)" />
           <rect x="24" y="4" width="26" height="38" rx="4" fill="#7e4238" transform="rotate(4 37 23)" />
@@ -300,6 +358,7 @@ export function Room({ game, t, lang }: { game: GameState; t: GameStrings; lang:
         <rect x="1180" y="820" width="60" height="42" rx="5" fill="#8a6f52" transform="rotate(-6 1210 841)" />
         <rect x="1040" y="838" width="44" height="60" rx="3" fill="#e0dccf" opacity="0.9" transform="rotate(24 1062 868)" />
         <rect x="470" y="850" width="40" height="56" rx="3" fill="#d6d1c2" opacity="0.85" transform="rotate(-18 490 878)" />
+        <rect width="1600" height="1000" filter="url(#rGrain)" opacity="0.05" style={{ mixBlendMode: 'overlay' }} />
       </g>
 
       {/* ---- always-lit layer: window + moon (outside dark filter) */}
